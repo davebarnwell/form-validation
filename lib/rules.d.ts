@@ -1,0 +1,17 @@
+import { HTMLFormValidatableElement } from "./types";
+declare function required(field: HTMLFormValidatableElement): string;
+declare function maxLength(field: HTMLFormValidatableElement): string;
+declare function minLength(field: HTMLFormValidatableElement): string;
+declare function min(field: HTMLFormValidatableElement): string;
+declare function max(field: HTMLFormValidatableElement): string;
+declare function email(field: HTMLFormValidatableElement): any;
+declare function number(field: HTMLFormValidatableElement): any;
+declare function url(field: HTMLFormValidatableElement): any;
+declare function integer(field: HTMLFormValidatableElement): any;
+declare function digits(field: HTMLFormValidatableElement): any;
+declare function alphanum(field: HTMLFormValidatableElement): any;
+declare function pattern(field: HTMLFormValidatableElement): any;
+declare function matchesOne(field: HTMLFormValidatableElement): string;
+declare function checked(field: HTMLInputElement): string;
+declare function requiredWith(field: HTMLFormValidatableElement): string;
+export { required, maxLength, minLength, email, number, integer, digits, alphanum, max, min, url, matchesOne, checked, pattern, requiredWith, };
