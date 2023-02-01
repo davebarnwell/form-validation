@@ -2,7 +2,7 @@ import { HTMLFormValidatableElement } from "./types";
 
 function required(field: HTMLFormValidatableElement) {
   if (field.hasAttribute("required") && !field.value) {
-    return "This field is required";
+    return errorMessageOrDefault(field, "required", "This field is required");
   }
   return null;
 }
@@ -12,9 +12,13 @@ function maxLength(field: HTMLFormValidatableElement) {
     field.hasAttribute("maxlength") &&
     field.value.length > parseInt(field.getAttribute("maxlength"), 10)
   ) {
-    return `This field can only be ${field.getAttribute(
-      "maxlength"
-    )} characters long`;
+    return errorMessageOrDefault(
+      field,
+      "maxlength",
+      `This field can only be ${field.getAttribute(
+        "maxlength"
+      )} characters long`
+    );
   }
   return null;
 }
@@ -24,9 +28,13 @@ function minLength(field: HTMLFormValidatableElement) {
     field.hasAttribute("minlength") &&
     field.value.length < parseInt(field.getAttribute("minlength"), 10)
   ) {
-    return `This field must be at least ${field.getAttribute(
-      "minlength"
-    )} characters long`;
+    return errorMessageOrDefault(
+      field,
+      "minlength",
+      `This field must be at least ${field.getAttribute(
+        "minlength"
+      )} characters long`
+    );
   }
   return null;
 }
@@ -36,7 +44,11 @@ function min(field: HTMLFormValidatableElement) {
     field.hasAttribute("min") &&
     parseFloat(field.value) < parseFloat(field.getAttribute("min"))
   ) {
-    return `Value must be greater or equal to ${field.getAttribute("min")}`;
+    return errorMessageOrDefault(
+      field,
+      "min",
+      `Value must be greater or equal to ${field.getAttribute("min")}`
+    );
   }
   return null;
 }
@@ -46,7 +58,11 @@ function max(field: HTMLFormValidatableElement) {
     field.hasAttribute("max") &&
     parseFloat(field.value) > parseFloat(field.getAttribute("max"))
   ) {
-    return `Value must be less or equal to ${field.getAttribute("max")}`;
+    return errorMessageOrDefault(
+      field,
+      "max",
+      `Value must be less or equal to ${field.getAttribute("max")}`
+    );
   }
   return null;
 }
@@ -54,16 +70,22 @@ function max(field: HTMLFormValidatableElement) {
 function email(field: HTMLFormValidatableElement) {
   const emailRegex =
     /^((([a-zA-Z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-zA-Z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-zA-Z]|\d|-|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-zA-Z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))$/;
-  return _matchesRegex(field, emailRegex, "This field must be a valid email");
+  const msg = errorMessageOrDefault(
+    field,
+    "email",
+    "This field must be a valid email"
+  );
+  return _matchesRegex(field, emailRegex, msg);
 }
 
 function number(field: HTMLFormValidatableElement) {
   // Follow https://www.w3.org/TR/html5/infrastructure.html#floating-point-numbers
-  return _matchesRegex(
+  const msg = errorMessageOrDefault(
     field,
-    /^-?(\d*\.)?\d+(e[-+]?\d+)?$/i,
+    "number",
     "This field must be a number"
   );
+  return _matchesRegex(field, /^-?(\d*\.)?\d+(e[-+]?\d+)?$/i, msg);
 }
 
 function url(field: HTMLFormValidatableElement) {
@@ -102,14 +124,19 @@ function url(field: HTMLFormValidatableElement) {
         "(?:/\\S*)?" +
         "$"
     );
-    return _matchesRegex(field, /^-?\d+$/, "This field must be a URL");
+    const msg = errorMessageOrDefault(field, "url", "This field must be a URL");
+    return _matchesRegex(field, /^-?\d+$/, msg);
   }
   return null;
 }
 
 function integer(field: HTMLFormValidatableElement) {
   if (field.hasAttribute("data-v-integer")) {
-    return _matchesRegex(field, /^-?\d+$/, "This field must be an integer");
+    return _matchesRegex(
+      field,
+      /^-?\d+$/,
+      errorMessageOrDefault(field, "integer", "This field must be an integer")
+    );
   }
   return null;
 }
@@ -119,7 +146,11 @@ function digits(field: HTMLFormValidatableElement) {
     return _matchesRegex(
       field,
       /^\d+$/,
-      "This field must be an unsigned integer"
+      errorMessageOrDefault(
+        field,
+        "digits",
+        "This field must be an unsigned integer"
+      )
     );
   }
   return null;
@@ -127,7 +158,15 @@ function digits(field: HTMLFormValidatableElement) {
 
 function alphanum(field: HTMLFormValidatableElement) {
   if (field.hasAttribute("data-v-alphanum")) {
-    return _matchesRegex(field, /^\w+$/i, "This field must be alphanumeric");
+    return _matchesRegex(
+      field,
+      /^\w+$/i,
+      errorMessageOrDefault(
+        field,
+        "alphanum",
+        "This field must be alphanumeric"
+      )
+    );
   }
   return null;
 }
@@ -138,7 +177,11 @@ function pattern(field: HTMLFormValidatableElement) {
     return _matchesRegex(
       field,
       regex,
-      "This field does not match the required pattern"
+      errorMessageOrDefault(
+        field,
+        "pattern",
+        "This field does not match the required pattern"
+      )
     );
   }
   return null;
@@ -155,7 +198,11 @@ function matchesOne(field: HTMLFormValidatableElement) {
   if (field.hasAttribute("data-v-in")) {
     const values = field.getAttribute("data-v-in").split(",");
     if (values.indexOf(field.value) === -1) {
-      return `Value must be one of ${field.getAttribute("data-v-in")}`;
+      return errorMessageOrDefault(
+        field,
+        "in",
+        `Value must be one of ${field.getAttribute("data-v-in")}`
+      );
     }
   }
   return null;
@@ -168,7 +215,11 @@ function checked(field: HTMLInputElement) {
     field.hasAttribute("data-v-accepted")
   ) {
     if (!field.checked) {
-      return "This field must be checked";
+      return errorMessageOrDefault(
+        field,
+        "required",
+        "This field must be checked"
+      );
     }
   }
   return null;
@@ -180,19 +231,30 @@ function requiredWith(field: HTMLFormValidatableElement) {
     const otherFieldName = field.getAttribute("data-v-required-with");
     const otherFieldElm = getFieldByNameInForm(field.form, otherFieldName);
     const otherFieldHasValue = otherFieldElm && otherFieldElm.value;
-    if (
-      (fieldHasValue && otherFieldHasValue) ||
-      (!fieldHasValue && !otherFieldHasValue)
-    ) {
-      return null;
+    if (otherFieldHasValue && !fieldHasValue) {
+      return errorMessageOrDefault(
+        field,
+        "required-with",
+        `This field is required with ${otherFieldName}`
+      );
     }
-    return `This field is required with ${otherFieldName}`;
   }
   return null;
 }
 
 function getFieldByNameInForm(form: HTMLFormElement, name: string) {
   return form.querySelector<HTMLFormValidatableElement>(`[name="${name}"]`);
+}
+
+function errorMessageOrDefault(
+  field: HTMLFormValidatableElement,
+  ruleAttributeName: string,
+  defaultError: string
+) {
+  if (field.hasAttribute(`data-v-${ruleAttributeName}-msg`)) {
+    return field.getAttribute(`data-v-${ruleAttributeName}-msg`);
+  }
+  return defaultError;
 }
 
 export {
