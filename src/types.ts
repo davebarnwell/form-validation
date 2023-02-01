@@ -1,3 +1,6 @@
-type HTMLFormValidatableElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+type HTMLFormValidatableElement =
+  | HTMLInputElement
+  | HTMLSelectElement
+  | HTMLTextAreaElement;
 
 export { HTMLFormValidatableElement };
